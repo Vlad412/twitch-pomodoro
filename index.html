@@ -7,17 +7,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pomodoro twitch obs</title>
     <style>
+        body {
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+        }
+
         #time {
             font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto;
             font-weight: bold;
-            font-size: 42px;
+            font-size: 25vw;
             color: black;
         }
     </style>
 </head>
 
 <body>
-    <div id="time"></div>
+    <div id="time">25:00</div>
 </body>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -29,12 +36,16 @@
         let sessions = 0;
         let pause = false;
 
+        function ensureTwoChars(n) {
+            return n.toString().padStart(2, '0');
+        }
+
         setInterval(() => {
 
             seconds--;
             if (seconds === -1) {
                 minutes--;
-                seconds = 60;
+                seconds = 59;
             }
 
             if (minutes === -1) {
@@ -48,7 +59,7 @@
                 }
 
             }
-            div.innerText = `${minutes}:${seconds}`;
+            div.innerText = `${ensureTwoChars(minutes)}:${ensureTwoChars(seconds)}`;
         }, 1000);
 
     });
