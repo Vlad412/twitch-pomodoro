@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro twitch obs</title>
+    <style>
+        #time {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto;
+            font-weight: bold;
+            font-size: 42px;
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="time"></div>
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const div = document.getElementById("time");
+
+        let minutes = 25;
+        let seconds = 0;
+
+        let sessions = 0;
+        let pause = false;
+
+        setInterval(() => {
+
+            seconds--;
+            if (seconds === -1) {
+                minutes--;
+                seconds = 60;
+            }
+
+            if (minutes === -1) {
+                sessions++;
+                minutes = 25;
+
+                pause = sessions % 4 === 0;
+
+                if (pause) {
+                    minutes = 5;
+                }
+
+            }
+            div.innerText = `${minutes}:${seconds}`;
+        }, 1000);
+
+    });
+</script>
+
+</html>
