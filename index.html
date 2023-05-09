@@ -7,11 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pomodoro twitch obs</title>
     <style>
+        body,
+        #time {
+            cursor: pointer;
+        }
+
         body {
             align-items: center;
             display: flex;
             justify-content: center;
             height: 100vh;
+            flex-direction: column;
         }
 
         #time {
@@ -25,11 +31,27 @@
 
 <body>
     <div id="time">25:00</div>
+    <div>Sessions : <span id="sessions"></span></div>
 </body>
 <script>
+
+    const makeStyle = ({ el, backgroundColor, color }) => {
+        el.style.backgroundColor = backgroundColor || "";
+        el.style.color = color || "";
+    };
+
     document.addEventListener("DOMContentLoaded", () => {
         const div = document.getElementById("time");
+        const sessionsCounter = document.getElementById("sessions");
+        document.body.addEventListener("click", () => {
+            freeze = !freeze;
 
+            freeze ? makeStyle({ el: div, backgroundColor: "blue", color: "lightblue" }) : makeStyle({ el: div });
+        });
+
+        let freeze = false;
+
+        let wasSmallPause = false;
         let minutes = 25;
         let seconds = 0;
 
@@ -42,24 +64,44 @@
 
         setInterval(() => {
 
-            seconds--;
-            if (seconds === -1) {
-                minutes--;
-                seconds = 59;
-            }
-
-            if (minutes === -1) {
-                sessions++;
-                minutes = 25;
-
-                pause = sessions % 4 === 0;
-
-                if (pause) {
-                    minutes = 5;
+            if (!freeze) {
+                seconds--;
+                if (seconds === -1) {
+                    minutes--;
+                    seconds = 59;
                 }
 
+                if (minutes === -1) {
+
+                    if (pause) {
+                        pause = false;
+                        wasSmallPause = true;
+                        sessions = 0;
+                    }
+
+                    if (!wasSmallPause) {
+                        sessions++;
+
+                        pause = sessions !== 0 && sessions % 4 === 0;
+
+                        if (pause) {
+                            minutes = 30;
+                            makeStyle({ el: div, color: "lightgreen" });
+                        } else {
+                            minutes = 5;
+                            wasSmallPause = true;
+                            makeStyle({ el: div, color: "tomato" });
+                        }
+                    } else {
+                        minutes = 25;
+                        wasSmallPause = false;
+                        makeStyle({ el: div });
+                    }
+
+                }
+                div.innerText = `${ensureTwoChars(minutes)}:${ensureTwoChars(seconds)}`;
+                sessionsCounter.innerText = sessions;
             }
-            div.innerText = `${ensureTwoChars(minutes)}:${ensureTwoChars(seconds)}`;
         }, 1000);
 
     });
